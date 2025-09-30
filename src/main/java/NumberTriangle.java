@@ -1,4 +1,6 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the provided NumberTriangle class to be used in this coding task.
@@ -109,8 +111,7 @@ public class NumberTriangle {
         InputStream inputStream = NumberTriangle.class.getClassLoader().getResourceAsStream(fname);
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 
-
-        // TODO define any variables that you want to use to store things
+        List<List<NumberTriangle>> rows = new ArrayList<>();
 
         // will need to return the top of the NumberTriangle,
         // so might want a variable for that.
@@ -119,14 +120,43 @@ public class NumberTriangle {
         String line = br.readLine();
         while (line != null) {
 
-            // remove when done; this line is included so running starter code prints the contents of the file
-            System.out.println(line);
+            String[] numbers = line.split(" ");
+            List<NumberTriangle> currentRow = new ArrayList<>();
 
-            // TODO process the line
+            for (String num : numbers) {
+                if (!num.isEmpty()) {
+                    int value = Integer.parseInt(num);
+                    currentRow.add(new NumberTriangle(value));
+                }
+            }
+
+            if (!currentRow.isEmpty()) {
+                rows.add(currentRow);
+
+                if (top == null) {
+                    top = currentRow.get(0);
+                }
+            }
 
             //read the next line
             line = br.readLine();
         }
+
+        for (int i = 0; i < rows.size() - 1; i++) {
+            List<NumberTriangle> currentRow = rows.get(i);
+            List<NumberTriangle> nextRow = rows.get(i + 1);
+
+            for (int j = 0; j < currentRow.size(); j++) {
+                NumberTriangle parent = currentRow.get(j);
+
+                // Left child is at the same index in the next row
+                parent.setLeft(nextRow.get(j));
+
+                // Right child is at index + 1 in the next row
+                parent.setRight(nextRow.get(j + 1));
+            }
+        }
+
         br.close();
         return top;
     }
